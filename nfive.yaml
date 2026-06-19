@@ -1,0 +1,48 @@
+name: NFive
+version: 1.0.0
+author: NFive
+description: NFive is a FiveM framework written in C#. To manage NFive plugins with the nfpm CLI (https://nfive.io).
+
+$engine: 3
+$onesync: on
+
+tasks:
+  # 1. Download the base FiveM resources (cfx-server-data)
+  - action: download_github
+    src: https://github.com/citizenfx/cfx-server-data
+    ref: master
+    subpath: resources
+    dest: ./resources
+
+  # 2. Download and extract the latest NFive release
+  - action: download_file
+    url: https://github.com/NFive/NFive/releases/latest/download/nfive.zip
+    path: ./tmp/nfive.zip
+
+  - action: unzip
+    src: ./tmp/nfive.zip
+    dest: ./resources/nfive
+
+  # 3. Connect to the MySQL database using the provided connection details and create the database if it doesn't exist.
+  - action: connect_database
+
+  # 4. Download the NFive recipe repo (contains the config folder and server.cfg)
+  - action: download_github
+    src: https://github.com/amir-halloul/NFive.txAdminRecipe
+    ref: main
+    dest: ./tmp/nfive-recipe
+
+  # 5. Move the config folder and server.cfg into place
+  - action: move_path
+    src: ./tmp/nfive-recipe/config
+    dest: ./resources/nfive/config
+    overwrite: true
+
+  - action: move_path
+    src: ./tmp/nfive-recipe/server.cfg
+    dest: ./server.cfg
+    overwrite: true
+
+  # 6. Cleanup
+  - action: remove_path
+    path: ./tmp
