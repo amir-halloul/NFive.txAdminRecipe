@@ -43,6 +43,11 @@ tasks:
     dest: ./server.cfg
     overwrite: true
 
-  # 6. Cleanup
+  # 6. Replace the context variables (database connection, etc.) in the config
+  - action: replace_string
+    mode: all_vars
+    file: ./resources/nfive/config/database.yml
+
+  # 7. Cleanup
   - action: remove_path
     path: ./tmp
